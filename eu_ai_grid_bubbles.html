@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EU AI Representation · Grid Bubbles</title>
+<style>
+@font-face {
+  font-family: 'Chaney';
+  src: url('chaney-ultraextended-webfont.woff2') format('woff2'),
+       url('chaney-ultraextended-webfont.woff') format('woff'),
+       url('chaney-ultraextended-webfont.ttf') format('truetype');
+  font-weight: normal; font-style: normal;
+}
+@import url('https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:ital,wght@0,400;0,700;1,400&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--yellow:#fdf151;--grey:#656565;--dark:#222222;--bg:#ffffff}
+
+body{
+  background:var(--bg);color:var(--dark);
+  font-family:'PT Sans',sans-serif;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  /* Responsive padding: generous on desktop, tight on mobile */
+  padding: clamp(20px,5vw,60px) clamp(12px,4vw,32px) clamp(20px,5vw,60px);
+}
+
+/* ── HEADER ── */
+.header{
+  width:100%;max-width:700px;margin-bottom:14px;
+  border-top:3px solid var(--dark);padding-top:20px;
+  display:grid;grid-template-columns:1fr auto;gap:24px;align-items:start;
+}
+.eyebrow{
+  font-family:'PT Sans',sans-serif;
+  font-size:clamp(9px,1.5vw,10px);
+  letter-spacing:.2em;text-transform:uppercase;color:var(--grey);margin-bottom:10px;
+}
+h1{
+  font-family:'Chaney',sans-serif;font-weight:normal;
+  font-size:clamp(20px,5vw,42px);line-height:1.05;
+  text-transform:uppercase;color:var(--dark);
+}
+h1 .trail{text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:5px}
+.subtitle{
+  font-family:'PT Sans',sans-serif;
+  font-size:clamp(12px,2vw,14px);
+  font-style:italic;color:var(--grey);line-height:1.5;
+  max-width:320px;margin-top:12px;
+}
+.yblock{width:44px;height:44px;background:var(--yellow);flex-shrink:0;align-self:start;margin-top:6px}
+
+/* ── LEGEND ── */
+.legend{
+  width:100%;max-width:700px;
+  margin-bottom:6px;
+  border-bottom:1px solid #e0e0e0;
+  padding-bottom:10px;
+}
+
+/* ── CHART WRAP — desktop: adds 32px above/below; mobile: no extra padding ── */
+.chart-wrap{
+  width:100%;max-width:700px;
+  padding:clamp(0px,3vw,32px) 0;
+}
+#chart-svg{display:block;width:100%;overflow:visible;user-select:none}
+
+/* ── INFO FOOTER ── */
+.info-footer{
+  width:100%;max-width:700px;
+  margin-top:0;
+  border-top:1px solid #e0e0e0;padding-top:12px;
+}
+.info-footer p{
+  font-family:'PT Sans',sans-serif;
+  font-size:clamp(9px,1.5vw,10px);
+  color:var(--grey);line-height:1.65;margin-bottom:5px;
+}
+.info-footer p strong{font-weight:700;color:#444}
+
+/* ── TOOLTIP ── */
+#tooltip{
+  position:fixed;pointer-events:none;z-index:999;display:none;
+  background:rgba(255,255,255,0.70);
+  backdrop-filter:blur(22px) saturate(1.9);
+  -webkit-backdrop-filter:blur(22px) saturate(1.9);
+  border-radius:14px;border:none;
+  padding:16px 18px 14px;min-width:220px;
+  box-shadow:0 10px 40px rgba(0,0,0,0.14),0 2px 8px rgba(0,0,0,0.07);
+}
+.tt-country{
+  font-family:'Chaney',sans-serif;font-size:14px;
+  text-transform:uppercase;color:var(--dark);margin-bottom:4px;line-height:1;
+}
+.tt-cat-bar{
+  display:inline-block;padding:3px 10px;border-radius:4px;
+  font-family:'PT Sans',sans-serif;font-size:10px;font-weight:700;
+  letter-spacing:.05em;margin-bottom:12px;margin-top:4px;
+}
+.tt-divider{height:2px;background:var(--yellow);margin-bottom:11px;border-radius:1px}
+.tt-ratio-wrap{margin-bottom:10px}
+.tt-ratio-bar{display:inline-block;border-radius:6px;padding:6px 14px}
+.tt-ratio-lbl{
+  font-family:'PT Sans',sans-serif;font-size:8px;letter-spacing:.12em;
+  text-transform:uppercase;margin-bottom:2px;
+}
+.tt-ratio-val{font-family:'PT Serif',serif;font-size:22px;font-weight:700;line-height:1}
+.tt-funding-row{display:flex;justify-content:space-between;gap:12px;margin-bottom:10px}
+.tt-funding-cell .lbl{
+  font-family:'PT Sans',sans-serif;font-size:8px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--grey);margin-bottom:2px;
+}
+.tt-funding-cell .val{
+  font-family:'PT Serif',serif;font-size:20px;font-weight:700;color:var(--dark);line-height:1;
+}
+.tt-co-row .lbl{
+  font-family:'PT Sans',sans-serif;font-size:8px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--grey);margin-bottom:2px;
+}
+.tt-co-row .val{
+  font-family:'PT Serif',serif;font-size:16px;font-weight:700;color:var(--dark);line-height:1;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="eyebrow">EU AI Ecosystem · 2025 · Geographic Analysis</div>
+    <h1>Countries<br>Over &amp; Under<br>Represented<span class="trail">_</span></h1>
+    <p class="subtitle">Actual vs GDP-Weighted Expected Funding</p>
+  </div>
+  <div class="yblock"></div>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <!--
+    Bottom = 100. Yellow r=44 cy=56 top=12. Grey r=26 cy=74 top=48.
+    Bigger legend fonts: 15px labels.
+  -->
+  <svg id="legend-svg" width="700" height="104" viewBox="0 0 700 104"
+       style="display:block;width:100%;overflow:visible">
+    <circle cx="50" cy="56" r="44" fill="#fdf151" stroke="#656565" stroke-width="0.25"/>
+    <circle cx="50" cy="74" r="26" fill="#656565" stroke="none"/>
+    <line x1="50" y1="12" x2="114" y2="12" stroke="#cccccc" stroke-width="0.8"/>
+    <line x1="50" y1="48" x2="114" y2="48" stroke="#cccccc" stroke-width="0.8"/>
+    <text x="118" y="12" font-family="PT Sans, sans-serif" font-size="15" fill="#555" dominant-baseline="middle">actual level</text>
+    <text x="118" y="48" font-family="PT Sans, sans-serif" font-size="15" fill="#555" dominant-baseline="middle">expected level</text>
+  </svg>
+</div>
+
+<!-- CHART — padding added via .chart-wrap, responsive via clamp -->
+<div class="chart-wrap">
+  <svg id="chart-svg"></svg>
+</div>
+
+<!-- TOOLTIP -->
+<div id="tooltip">
+  <div class="tt-country" id="tt-country"></div>
+  <div class="tt-cat-bar" id="tt-cat-bar"></div>
+  <div class="tt-divider"></div>
+  <div class="tt-ratio-wrap">
+    <div class="tt-ratio-bar" id="tt-ratio-bar">
+      <div class="tt-ratio-lbl" id="tt-ratio-lbl">Ratio</div>
+      <div class="tt-ratio-val" id="tt-ratio-val"></div>
+    </div>
+  </div>
+  <div class="tt-funding-row">
+    <div class="tt-funding-cell">
+      <div class="lbl">Actual Funding</div>
+      <div class="val" id="tt-actual"></div>
+    </div>
+    <div class="tt-funding-cell">
+      <div class="lbl">Expected Funding</div>
+      <div class="val" id="tt-expected"></div>
+    </div>
+  </div>
+  <div class="tt-co-row">
+    <div class="lbl">AI Companies</div>
+    <div class="val" id="tt-companies"></div>
+  </div>
+</div>
+
+<!-- INFO FOOTER -->
+<div class="info-footer">
+  <p><strong>Methodology:</strong> Ratio = (Actual Funding / GDP) ÷ (Total EU Funding / Total EU GDP). Figures exclude outlier deals. Ranked by Ratio / Total EU (col K).</p>
+  <p><strong>Thresholds:</strong> Over Represented &gt; 1.3 · In Line 0.7–1.3 · Under Represented &lt; 0.7</p>
+  <p><strong>Sources:</strong> GDP/capita — IMF World Economic Outlook Oct 2025 (nominal USD). Population — Eurostat 2023. AI company funding — Open Future Foundation analysis 2025.</p>
+  <p style="margin-top:8px;color:#aaa;">Hover over any bubble to see country details. Yellow = actual AI funding; grey = GDP-weighted expected baseline.</p>
+</div>
+
+<script>
+// ── DATA — sourced from T3_Over_Underrep v2 · sorted by col K (Ratio/TOTAL EU) desc ──
+const DATA = [
+  {country:"Netherlands",  actual:6211.9,  expected:1534.0,  ratio:4.049, cat:"over",   companies:72 },
+  {country:"Sweden",       actual:2635.2,  expected:746.2,   ratio:3.532, cat:"over",   companies:53 },
+  {country:"Estonia",      actual:139.7,   expected:50.7,    ratio:2.755, cat:"over",   companies:25 },
+  {country:"France",       actual:6011.7,  expected:3849.3,  ratio:1.562, cat:"over",   companies:125},
+  {country:"Portugal",     actual:392.2,   expected:363.5,   ratio:1.079, cat:"inline", companies:25 },
+  {country:"Finland",      actual:308.4,   expected:359.8,   ratio:0.857, cat:"inline", companies:23 },
+  {country:"Lithuania",    actual:87.0,    expected:105.8,   ratio:0.823, cat:"inline", companies:10 },
+  {country:"Cyprus",       actual:44.6,    expected:54.6,    ratio:0.818, cat:"inline", companies:4  },
+  {country:"Germany",      actual:4479.4,  expected:5739.0,  ratio:0.781, cat:"inline", companies:192},
+  {country:"Spain",        actual:1571.3,  expected:2139.6,  ratio:0.734, cat:"inline", companies:65 },
+  {country:"Ireland",      actual:561.2,   expected:798.8,   ratio:0.702, cat:"inline", companies:33 },
+  {country:"Denmark",      actual:296.3,   expected:526.4,   ratio:0.563, cat:"under",  companies:30 },
+  {country:"Czech R.",     actual:168.9,   expected:439.0,   ratio:0.385, cat:"under",  companies:19 },
+  {country:"Belgium",      actual:254.6,   expected:823.6,   ratio:0.309, cat:"under",  companies:26 },
+  {country:"Romania",      actual:144.2,   expected:488.3,   ratio:0.295, cat:"under",  companies:12 },
+  {country:"Italy",        actual:580.6,   expected:2912.2,  ratio:0.199, cat:"under",  companies:69 },
+  {country:"Greece",       actual:51.0,    expected:323.7,   ratio:0.158, cat:"under",  companies:6  },
+  {country:"Austria",      actual:86.7,    expected:650.2,   ratio:0.133, cat:"under",  companies:18 },
+  {country:"Slovakia",     actual:17.9,    expected:179.7,   ratio:0.099, cat:"under",  companies:5  },
+  {country:"Slovenia",     actual:8.5,     expected:89.4,    ratio:0.095, cat:"under",  companies:1  },
+  {country:"Hungary",      actual:13.3,    expected:282.0,   ratio:0.047, cat:"under",  companies:6  },
+  {country:"Poland",       actual:50.1,    expected:1191.0,  ratio:0.042, cat:"under",  companies:28 },
+  {country:"Luxembourg",   actual:4.6,     expected:117.7,   ratio:0.039, cat:"under",  companies:5  },
+  {country:"Latvia",       actual:1.7,     expected:55.8,    ratio:0.031, cat:"under",  companies:4  },
+  {country:"Croatia",      actual:3.0,     expected:120.4,   ratio:0.025, cat:"under",  companies:4  },
+  {country:"Malta",        actual:0.4,     expected:33.9,    ratio:0.013, cat:"under",  companies:2  },
+  {country:"Bulgaria",     actual:0.0,     expected:149.8,   ratio:0.000, cat:"under",  companies:1  },
+];
+
+const CAT_CFG = {
+  over:   {fill:'#fdf151', text:'#333333', label:'Over Represented' },
+  inline: {fill:'#c8c8c8', text:'#333333', label:'In Line'          },
+  under:  {fill:'#656565', text:'#ffffff', label:'Under Represented'},
+};
+
+// ── Responsive: detect mobile (≤540px rendered width) ──
+function isMobile(){ return window.innerWidth <= 540; }
+
+// ── Sizing: everything scales with mobile flag ──
+const BASE_R_DT = 24;   // desktop baseline radius
+const BASE_R_MB = 16;   // mobile baseline radius (smaller bubbles → more cols fit)
+
+function getConfig(){
+  const mb = isMobile();
+  return {
+    BASE_R    : mb ? BASE_R_MB : BASE_R_DT,
+    COLS      : mb ? 6 : 8,
+    SVG_W     : mb ? 380 : 700,
+    PAD_H     : mb ? 8 : 10,
+    LABEL_ABOVE: mb ? 20 : 24,
+    NAME_GAP  : mb ? 13 : 16,
+    NAME_FONT : mb ? 13 : 15,
+    LINE_GAP  : mb ? 8  : 10,  // space from name to category line
+    LINE_H    : 4,              // category line thickness (px)
+    LINE_SPACE: mb ? 4 : 5,    // gap between adjacent different-cat lines
+    CAT_LABEL_GAP: 5,          // gap between line bottom and label text
+    CAT_FONT_H: mb ? 10 : 12,  // line label font size (height for spacing)
+    ROW_GAP   : mb ? 16 : 20,  // between rows — slightly more to fit label below line
+    // ratio label fonts scaled by bigR
+    ratioSz: (bigR) => {
+      if(mb) return bigR>44?18:bigR>28?13:bigR>18?11:9;
+      return bigR>65?26:bigR>42?19:bigR>28?15:12;
+    },
+    CAT_FONT  : mb ? 10 : 12,
+  };
+}
+
+// Per-bubble geometry for tooltip
+const BUBBLE_GEO=[];
+
+function approxTextWidth(text, fontSize){
+  return text.length * fontSize * 0.82;
+}
+
+// Format ratio: 2 decimals when tenths digit is 0 (e.g. 0.09→0.09×, 1.04→1.04×), else 1 decimal
+function fmtRatio(r){
+  const tenths = Math.floor(Math.abs(r) * 10) % 10;
+  if(tenths === 0 && r !== Math.round(r)) return r.toFixed(2)+'×';
+  return r.toFixed(1)+'×';
+}
+
+function buildChart(){
+  const ns  = 'http://www.w3.org/2000/svg';
+  const svg = document.getElementById('chart-svg');
+
+  // Clear previous
+  while(svg.firstChild) svg.removeChild(svg.firstChild);
+  BUBBLE_GEO.length = 0;
+
+  const C = getConfig();
+  const {BASE_R,COLS,SVG_W,PAD_H,LABEL_ABOVE,NAME_GAP,NAME_FONT,LINE_GAP,LINE_H,LINE_SPACE,CAT_LABEL_GAP,CAT_FONT_H,ROW_GAP,ratioSz,CAT_FONT} = C;
+
+  const COL_W = (SVG_W - PAD_H*2) / COLS;
+  const ROWS  = Math.ceil(DATA.length / COLS);
+
+  function rv(ratio){ return BASE_R * Math.sqrt(Math.max(ratio,0)); }
+
+  function getRowMaxR(ri){
+    let m=BASE_R;
+    for(let c=0;c<COLS;c++){const i=ri*COLS+c; if(i<DATA.length) m=Math.max(m,rv(DATA[i].ratio));}
+    return m;
+  }
+
+  // Row layout: bottomLine is where circles sit, lineY is the category line y
+  // Label sits BELOW the line, so next row starts after lineY + LINE_H + CAT_LABEL_GAP + CAT_FONT_H
+  function getRowInfo(){
+    const rows=[]; let y=10;
+    for(let r=0;r<ROWS;r++){
+      const maxR=getRowMaxR(r);
+      const bottomLine=y+LABEL_ABOVE+maxR*2;
+      const nameY = bottomLine+NAME_GAP+NAME_FONT;
+      const lineY = nameY + LINE_GAP;
+      rows.push({bottomLine, maxR, nameY, lineY});
+      y = lineY + LINE_H + CAT_LABEL_GAP + CAT_FONT_H + ROW_GAP;
+    }
+    return rows;
+  }
+
+  const rowInfo = getRowInfo();
+  const last    = rowInfo[rowInfo.length-1];
+  const totalH  = last.lineY + LINE_H + CAT_LABEL_GAP + CAT_FONT_H + 10;
+
+  svg.setAttribute('viewBox',`0 0 ${SVG_W} ${totalH}`);
+  svg.setAttribute('height', totalH);
+
+  // defs
+  const defs=document.createElementNS(ns,'defs');
+  defs.innerHTML=`<filter id="sh" x="-30%" y="-30%" width="160%" height="160%">
+    <feDropShadow dx="0" dy="1" stdDeviation="2.5" flood-color="#000" flood-opacity="0.07"/>
+  </filter>`;
+  svg.appendChild(defs);
+
+  // ── Bubbles ──
+  DATA.forEach((d,idx)=>{
+    const ri = Math.floor(idx/COLS);
+    const ci = idx%COLS;
+    const info = rowInfo[ri];
+    const cx = PAD_H + ci*COL_W + COL_W/2;
+    const bl = info.bottomLine;
+
+    const rvv  = rv(d.ratio);
+    const rb   = BASE_R;
+    const cyVal= bl-rvv;
+    const cyBas= bl-rb;
+    const over1= d.ratio>=1.0;
+
+    const bigR  = Math.max(rvv,rb);
+    const bigCY = over1?cyVal:cyBas;
+    const bigTop= bigCY-bigR;
+
+    BUBBLE_GEO.push({cx, bigCY, bigR, bigTop, cyVal, cyBas, rvv, rb});
+
+    const g=document.createElementNS(ns,'g');
+    g.style.cursor='pointer';
+
+    // Hit rect covers union of both circles
+    const hitTop = Math.min(cyVal-rvv, cyBas-rb);
+    const hitBot = Math.max(cyVal+rvv, cyBas+rb);
+    const hitR   = document.createElementNS(ns,'rect');
+    hitR.setAttribute('x', cx-bigR-2); hitR.setAttribute('y', hitTop-2);
+    hitR.setAttribute('width', bigR*2+4); hitR.setAttribute('height', hitBot-hitTop+4);
+    hitR.setAttribute('fill','transparent');
+    g.appendChild(hitR);
+
+    if(over1){
+      const yc=document.createElementNS(ns,'circle');
+      yc.setAttribute('cx',cx); yc.setAttribute('cy',cyVal); yc.setAttribute('r',rvv);
+      yc.setAttribute('fill','#fdf151'); yc.setAttribute('stroke','#656565'); yc.setAttribute('stroke-width','0.25');
+      yc.setAttribute('filter','url(#sh)');
+      g.appendChild(yc);
+      const bc=document.createElementNS(ns,'circle');
+      bc.setAttribute('cx',cx); bc.setAttribute('cy',cyBas); bc.setAttribute('r',rb);
+      bc.setAttribute('fill','#656565'); bc.setAttribute('fill-opacity','0.10');
+      bc.setAttribute('stroke','#656565'); bc.setAttribute('stroke-width','0.5');
+      bc.setAttribute('stroke-dasharray','4 6'); bc.setAttribute('pointer-events','none');
+      g.appendChild(bc);
+    } else {
+      const bc=document.createElementNS(ns,'circle');
+      bc.setAttribute('cx',cx); bc.setAttribute('cy',cyBas); bc.setAttribute('r',rb);
+      bc.setAttribute('fill','#656565'); bc.setAttribute('stroke','#656565'); bc.setAttribute('stroke-width','0.25');
+      bc.setAttribute('pointer-events','none');
+      g.appendChild(bc);
+      const yc=document.createElementNS(ns,'circle');
+      yc.setAttribute('cx',cx); yc.setAttribute('cy',cyVal); yc.setAttribute('r',rvv);
+      yc.setAttribute('fill','#fdf151'); yc.setAttribute('stroke','#656565'); yc.setAttribute('stroke-width','0.25');
+      g.appendChild(yc);
+    }
+
+    // Hover ring
+    const ring=document.createElementNS(ns,'circle');
+    ring.setAttribute('cx',cx); ring.setAttribute('cy',bigCY); ring.setAttribute('r',bigR+4);
+    ring.setAttribute('fill','none'); ring.setAttribute('stroke','#999'); ring.setAttribute('stroke-width','1');
+    ring.setAttribute('opacity','0'); ring.setAttribute('pointer-events','none');
+    g.appendChild(ring);
+
+    // Ratio label — LARGER, above the taller circle
+    const vSz = ratioSz(bigR);
+    const vEl=document.createElementNS(ns,'text');
+    vEl.setAttribute('x',cx); vEl.setAttribute('y',bigTop-7);
+    vEl.setAttribute('text-anchor','middle'); vEl.setAttribute('font-size',vSz);
+    vEl.setAttribute('font-family','PT Sans, sans-serif'); vEl.setAttribute('font-weight','700');
+    vEl.setAttribute('fill','#222'); vEl.setAttribute('pointer-events','none');
+    vEl.textContent = fmtRatio(d.ratio);
+    g.appendChild(vEl);
+
+    // Country name
+    const nEl=document.createElementNS(ns,'text');
+    nEl.setAttribute('x',cx); nEl.setAttribute('y',info.nameY);
+    nEl.setAttribute('text-anchor','middle'); nEl.setAttribute('font-size',NAME_FONT);
+    nEl.setAttribute('font-family','PT Sans, sans-serif');
+    nEl.setAttribute('fill','#333'); nEl.setAttribute('pointer-events','none');
+    nEl.textContent=d.country;
+    g.appendChild(nEl);
+
+    g.addEventListener('mouseenter',()=>{ ring.setAttribute('opacity','1'); showTip(idx); });
+    g.addEventListener('mouseleave',()=>{ ring.setAttribute('opacity','0'); hideTip(); });
+    svg.appendChild(g);
+  });
+
+  // ── Category lines (4px thick) replacing bars ──
+  const drawnCatLabels = new Set(); // track which labels have been rendered
+  rowInfo.forEach((info,ri)=>{
+    const lineY   = info.lineY;
+    const rowStart= ri*COLS;
+    const cells=[];
+    for(let ci=0;ci<COLS;ci++){
+      const idx=rowStart+ci;
+      if(idx<DATA.length) cells.push({ci,cat:DATA[idx].cat});
+    }
+    const runs=[];
+    let cur=null;
+    cells.forEach(cell=>{
+      if(!cur||cell.cat!==cur.cat){cur={cat:cell.cat,cells:[cell]};runs.push(cur);}
+      else cur.cells.push(cell);
+    });
+
+    // Track which category labels have already been drawn across all rows
+    runs.forEach((run,ri2)=>{
+      const cfg  = CAT_CFG[run.cat];
+      const first= run.cells[0];
+      const lastC= run.cells[run.cells.length-1];
+      const leftInset  = ri2>0 ? LINE_SPACE/2 : 0;
+      const rightInset = ri2<runs.length-1 ? LINE_SPACE/2 : 0;
+      const lx  = PAD_H + first.ci*COL_W + leftInset;
+      const lw  = (lastC.ci-first.ci+1)*COL_W - leftInset - rightInset;
+      const midX= lx + lw/2;
+
+      // 4px thick line
+      const line=document.createElementNS(ns,'rect');
+      line.setAttribute('x',lx); line.setAttribute('y',lineY);
+      line.setAttribute('width',lw); line.setAttribute('height',LINE_H);
+      line.setAttribute('fill',cfg.fill);
+      svg.appendChild(line);
+
+      // Label BELOW the line — only once per category across the whole chart, and only if it fits
+      const labelText=cfg.label.toUpperCase();
+      const estW = approxTextWidth(labelText, CAT_FONT);
+      if(estW < lw-6 && !drawnCatLabels.has(run.cat)){
+        drawnCatLabels.add(run.cat);
+        const lEl=document.createElementNS(ns,'text');
+        lEl.setAttribute('x',midX);
+        lEl.setAttribute('y', lineY + LINE_H + CAT_LABEL_GAP);
+        lEl.setAttribute('text-anchor','middle');
+        lEl.setAttribute('dominant-baseline','hanging');
+        lEl.setAttribute('font-size',CAT_FONT);
+        lEl.setAttribute('font-family','Chaney, sans-serif');
+        lEl.setAttribute('fill', cfg.fill==='#fdf151'?'#333':cfg.fill==='#c8c8c8'?'#555':'#656565');
+        lEl.setAttribute('pointer-events','none');
+        lEl.textContent=labelText;
+        svg.appendChild(lEl);
+      }
+    });
+  });
+}
+
+// ── Tooltip ──
+const tip=document.getElementById('tooltip');
+let currentIdx=-1;
+
+function fmt(n){ return Math.round(n).toLocaleString(); }
+
+function showTip(idx){
+  currentIdx=idx;
+  const d  =DATA[idx];
+  const geo=BUBBLE_GEO[idx];
+  const cfg=CAT_CFG[d.cat];
+
+  document.getElementById('tt-country').textContent=d.country;
+  const catBar=document.getElementById('tt-cat-bar');
+  catBar.textContent=cfg.label; catBar.style.background=cfg.fill; catBar.style.color=cfg.text;
+
+  const rBar=document.getElementById('tt-ratio-bar');
+  rBar.style.background=cfg.fill;
+  const rVal=document.getElementById('tt-ratio-val');
+  rVal.textContent=fmtRatio(d.ratio); rVal.style.color=cfg.text;
+  document.getElementById('tt-ratio-lbl').style.color=cfg.text;
+
+  document.getElementById('tt-actual').textContent   ='$'+fmt(d.actual)+'M';
+  document.getElementById('tt-expected').textContent ='$'+fmt(d.expected)+'M';
+  document.getElementById('tt-companies').textContent=d.companies;
+
+  tip.style.display='block';
+  posTip(geo);
+}
+
+function posTip(geo){
+  const svg  =document.getElementById('chart-svg');
+  const rect =svg.getBoundingClientRect();
+  const vbW  = isMobile() ? 380 : 700;
+  const scale= rect.width / vbW;
+
+  const unionTopY = Math.min(geo.cyVal-geo.rvv, geo.cyBas-geo.rb);
+  const unionBotY = Math.max(geo.cyVal+geo.rvv, geo.cyBas+geo.rb);
+  const screenX   = rect.left + geo.cx*scale;
+  const screenTopY= rect.top  + unionTopY*scale;
+  const screenBotY= rect.top  + unionBotY*scale;
+
+  const tw=tip.offsetWidth||230, th=tip.offsetHeight||190;
+  const mg=10;
+  let x=screenX-tw/2, y=screenTopY-th-mg;
+  if(x<8) x=8;
+  if(x+tw>window.innerWidth-8) x=window.innerWidth-tw-8;
+  if(y<8) y=screenBotY+mg;
+
+  tip.style.left=x+'px'; tip.style.top=y+'px';
+}
+
+function hideTip(){ tip.style.display='none'; currentIdx=-1; }
+
+// ── Rebuild on resize (debounced) ──
+let resizeTimer;
+window.addEventListener('resize',()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer=setTimeout(()=>{ buildChart(); },120);
+});
+
+buildChart();
+</script>
+</body>
+</html>
