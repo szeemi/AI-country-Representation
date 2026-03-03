@@ -7,9 +7,7 @@
 <style>
 @font-face {
   font-family: 'Chaney';
-  src: url('chaney-ultraextended-webfont.woff2') format('woff2'),
-       url('chaney-ultraextended-webfont.woff') format('woff'),
-       url('chaney-ultraextended-webfont.ttf') format('truetype');
+  src: url('CHANEY-Regular.otf') format('opentype');
   font-weight: normal; font-style: normal;
 }
 @import url('https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:ital,wght@0,400;0,700;1,400&display=swap');
@@ -38,13 +36,13 @@ body{
 }
 h1{
   font-family:'Chaney',sans-serif;font-weight:normal;
-  font-size:clamp(20px,5vw,42px);line-height:1.05;
+  font-size:clamp(28px,5vw,42px);line-height:1.05;
   text-transform:uppercase;color:var(--dark);
 }
-h1 .trail{text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:5px}
+h1 .trail{text-decoration:none}
 .subtitle{
   font-family:'PT Sans',sans-serif;
-  font-size:clamp(12px,2vw,14px);
+  font-size:clamp(15px,2vw,14px);
   font-style:italic;color:var(--grey);line-height:1.5;
   max-width:320px;margin-top:12px;
 }
@@ -146,8 +144,8 @@ h1 .trail{text-decoration:underline;text-decoration-thickness:3px;text-underline
     <circle cx="50" cy="74" r="26" fill="#656565" stroke="none"/>
     <line x1="50" y1="12" x2="114" y2="12" stroke="#cccccc" stroke-width="0.8"/>
     <line x1="50" y1="48" x2="114" y2="48" stroke="#cccccc" stroke-width="0.8"/>
-    <text x="118" y="12" font-family="PT Sans, sans-serif" font-size="15" fill="#555" dominant-baseline="middle">actual level</text>
-    <text x="118" y="48" font-family="PT Sans, sans-serif" font-size="15" fill="#555" dominant-baseline="middle">expected level</text>
+    <text x="118" y="12" font-family="PT Sans, sans-serif" font-size="18" fill="#555" dominant-baseline="middle">actual level</text>
+    <text x="118" y="48" font-family="PT Sans, sans-serif" font-size="18" fill="#555" dominant-baseline="middle">expected level</text>
   </svg>
 </div>
 
@@ -254,8 +252,8 @@ function getConfig(){
     ROW_GAP   : mb ? 16 : 20,  // between rows — slightly more to fit label below line
     // ratio label fonts scaled by bigR
     ratioSz: (bigR) => {
-      if(mb) return bigR>44?18:bigR>28?13:bigR>18?11:9;
-      return bigR>65?26:bigR>42?19:bigR>28?15:12;
+      if(mb) return bigR>44?22:bigR>28?17:bigR>18?14:11;
+      return bigR>65?30:bigR>42?23:bigR>28?18:14;
     },
     CAT_FONT  : mb ? 10 : 12,
   };
