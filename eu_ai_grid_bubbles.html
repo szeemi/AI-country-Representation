@@ -5,13 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EU AI Representation · Grid Bubbles</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:ital,wght@0,400;0,700;1,400&display=swap');
-
 @font-face {
   font-family: 'Chaney';
-  src: url('CHANEY-Regular.otf') format('opentype');
+  src: url('chaney-ultraextended-webfont.woff2') format('woff2'),
+       url('chaney-ultraextended-webfont.woff') format('woff'),
+       url('chaney-ultraextended-webfont.ttf') format('truetype');
   font-weight: normal; font-style: normal;
 }
+@import url('https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:ital,wght@0,400;0,700;1,400&display=swap');
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--yellow:#fdf151;--grey:#656565;--dark:#222222;--bg:#ffffff}
@@ -268,9 +269,9 @@ function approxTextWidth(text, fontSize){
 }
 
 // Format ratio: 2 decimals when tenths digit is 0 (e.g. 0.09→0.09×, 1.04→1.04×), else 1 decimal
-function fmtRatio(r){
-  const tenths = Math.floor(Math.abs(r) * 10) % 10;
-  if(tenths === 0 && r !== Math.round(r)) return r.toFixed(2)+'×';
+function fmtRatio(r, country){
+  // Netherlands: no decimal
+  if(country === 'Netherlands') return Math.round(r)+'×';
   return r.toFixed(1)+'×';
 }
 
@@ -395,7 +396,7 @@ function buildChart(){
     vEl.setAttribute('text-anchor','middle'); vEl.setAttribute('font-size',vSz);
     vEl.setAttribute('font-family','PT Sans, sans-serif'); vEl.setAttribute('font-weight','700');
     vEl.setAttribute('fill','#222'); vEl.setAttribute('pointer-events','none');
-    vEl.textContent = fmtRatio(d.ratio);
+    vEl.textContent = fmtRatio(d.ratio, d.country);
     g.appendChild(vEl);
 
     // Country name
@@ -472,7 +473,10 @@ function buildChart(){
 const tip=document.getElementById('tooltip');
 let currentIdx=-1;
 
-function fmt(n){ return Math.round(n).toLocaleString(); }
+function fmt(n){
+  if(n>=1000) return (n/1000).toFixed(1)+'B';
+  return Math.round(n)+'M';
+}
 
 function showTip(idx){
   currentIdx=idx;
@@ -487,11 +491,11 @@ function showTip(idx){
   const rBar=document.getElementById('tt-ratio-bar');
   rBar.style.background=cfg.fill;
   const rVal=document.getElementById('tt-ratio-val');
-  rVal.textContent=fmtRatio(d.ratio); rVal.style.color=cfg.text;
+  rVal.textContent=fmtRatio(d.ratio, d.country); rVal.style.color=cfg.text;
   document.getElementById('tt-ratio-lbl').style.color=cfg.text;
 
-  document.getElementById('tt-actual').textContent   ='$'+fmt(d.actual)+'M';
-  document.getElementById('tt-expected').textContent ='$'+fmt(d.expected)+'M';
+  document.getElementById('tt-actual').textContent   ='$'+fmt(d.actual);
+  document.getElementById('tt-expected').textContent ='$'+fmt(d.expected);
   document.getElementById('tt-companies').textContent=d.companies;
 
   tip.style.display='block';
