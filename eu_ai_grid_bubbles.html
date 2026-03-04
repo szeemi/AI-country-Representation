@@ -402,8 +402,8 @@ function buildChart(){
       const bc=document.createElementNS(ns,'circle');
       bc.setAttribute('cx',cx); bc.setAttribute('cy',cyBas); bc.setAttribute('r',rb);
       bc.setAttribute('fill','#333333'); bc.setAttribute('fill-opacity','0.10');
-      bc.setAttribute('stroke','#656565'); bc.setAttribute('stroke-width','0.5');
-      bc.setAttribute('stroke-dasharray','4 6'); bc.setAttribute('pointer-events','none');
+      bc.setAttribute('stroke','none');
+      bc.setAttribute('pointer-events','none');
       g.appendChild(bc);
     } else {
       const bc=document.createElementNS(ns,'circle');
