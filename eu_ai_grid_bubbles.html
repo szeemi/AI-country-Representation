@@ -7,7 +7,9 @@
 <style>
 @font-face {
   font-family: 'Chaney';
-  src: url('CHANEY-Regular.otf') format('opentype');
+  src: url('chaney-ultraextended-webfont.woff2') format('woff2'),
+       url('chaney-ultraextended-webfont.woff') format('woff'),
+       url('chaney-ultraextended-webfont.ttf') format('truetype');
   font-weight: normal; font-style: normal;
 }
 @import url('https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:ital,wght@0,400;0,700;1,400&display=swap');
@@ -36,28 +38,24 @@ body{
 }
 h1{
   font-family:'Chaney',sans-serif;font-weight:normal;
-  font-size:clamp(28px,5vw,42px);line-height:1.05;
+  font-size:clamp(20px,5vw,42px);line-height:1.05;
   text-transform:uppercase;color:var(--dark);
 }
-h1 .trail{text-decoration:none}
+h1 .trail{display:inline-block;border-bottom:3px solid var(--dark);line-height:0.85;}
 .subtitle{
   font-family:'PT Sans',sans-serif;
-  font-size:clamp(15px,2vw,14px);
+  font-size:clamp(12px,2vw,14px);
   font-style:italic;color:var(--grey);line-height:1.5;
   max-width:320px;margin-top:12px;
 }
 .yblock{width:44px;height:44px;background:var(--yellow);flex-shrink:0;align-self:start;margin-top:6px}
 
-@media(max-width:540px){
-  body{ padding-bottom:120px; }
-}
-
 /* ── LEGEND ── */
 .legend{
   width:100%;max-width:700px;
-  margin-bottom:6px;
+  margin-bottom:3px;
   border-bottom:1px solid #e0e0e0;
-  padding-bottom:10px;
+  padding-bottom:5px;
 }
 
 /* ── CHART WRAP — desktop: adds 32px above/below; mobile: no extra padding ── */
@@ -83,20 +81,12 @@ h1 .trail{text-decoration:none}
 /* ── TOOLTIP ── */
 #tooltip{
   position:fixed;pointer-events:none;z-index:999;display:none;
-  background:rgba(255,255,255,0.88);
+  background:rgba(255,255,255,0.70);
   backdrop-filter:blur(22px) saturate(1.9);
   -webkit-backdrop-filter:blur(22px) saturate(1.9);
   border-radius:14px;border:none;
   padding:16px 18px 14px;min-width:220px;
   box-shadow:0 10px 40px rgba(0,0,0,0.14),0 2px 8px rgba(0,0,0,0.07);
-}
-@media(max-width:540px){
-  #tooltip{
-    bottom:24px;left:50%!important;top:auto!important;
-    transform:translateX(-50%);
-    width:calc(100vw - 40px);max-width:320px;min-width:0;
-    border-radius:16px;
-  }
 }
 .tt-country{
   font-family:'Chaney',sans-serif;font-size:14px;
@@ -156,8 +146,8 @@ h1 .trail{text-decoration:none}
     <circle cx="50" cy="74" r="26" fill="#656565" stroke="none"/>
     <line x1="50" y1="12" x2="114" y2="12" stroke="#cccccc" stroke-width="0.8"/>
     <line x1="50" y1="48" x2="114" y2="48" stroke="#cccccc" stroke-width="0.8"/>
-    <text x="118" y="12" font-family="PT Sans, sans-serif" font-size="18" fill="#555" dominant-baseline="middle">actual level</text>
-    <text x="118" y="48" font-family="PT Sans, sans-serif" font-size="18" fill="#555" dominant-baseline="middle">expected level</text>
+    <text x="118" y="12" font-family="PT Sans, sans-serif" font-size="15" fill="#555" dominant-baseline="middle">actual level</text>
+    <text x="118" y="48" font-family="PT Sans, sans-serif" font-size="15" fill="#555" dominant-baseline="middle">expected level</text>
   </svg>
 </div>
 
@@ -195,42 +185,42 @@ h1 .trail{text-decoration:none}
 
 <!-- INFO FOOTER -->
 <div class="info-footer">
-  <p><strong>Methodology:</strong> Ratio = (Actual Funding / GDP) ÷ (Total EU Funding / Total EU GDP). Figures exclude outlier deals. Ranked by Ratio / Total EU (col K).</p>
+  <p><strong>Methodology:</strong> GDP Weight (%) = (Population × GDP/capita 2025) ÷ Σ(Population × GDP/capita 2025) across EU27. Expected Funding = GDP Weight % × Total Observed Funding ($34.1B). Ratio = Actual ÷ Expected.</p>
   <p><strong>Thresholds:</strong> Over Represented &gt; 1.3 · In Line 0.7–1.3 · Under Represented &lt; 0.7</p>
   <p><strong>Sources:</strong> GDP/capita — IMF World Economic Outlook Oct 2025 (nominal USD). Population — Eurostat 2023. AI company funding — Open Future Foundation analysis 2025.</p>
   <p style="margin-top:8px;color:#aaa;">Hover over any bubble to see country details. Yellow = actual AI funding; grey = GDP-weighted expected baseline.</p>
 </div>
 
 <script>
-// ── DATA — sourced from T3_Over_Underrep v2 · sorted by col K (Ratio/TOTAL EU) desc ──
+// ── DATA — Czech Republic abbreviated ──
 const DATA = [
-  {country:"Netherlands",  actual:6211.9,  expected:1534.0,  ratio:4.049, cat:"over",   companies:72 },
-  {country:"Sweden",       actual:2635.2,  expected:746.2,   ratio:3.532, cat:"over",   companies:53 },
-  {country:"Estonia",      actual:139.7,   expected:50.7,    ratio:2.755, cat:"over",   companies:25 },
-  {country:"France",       actual:6011.7,  expected:3849.3,  ratio:1.562, cat:"over",   companies:125},
-  {country:"Portugal",     actual:392.2,   expected:363.5,   ratio:1.079, cat:"inline", companies:25 },
-  {country:"Finland",      actual:308.4,   expected:359.8,   ratio:0.857, cat:"inline", companies:23 },
-  {country:"Lithuania",    actual:87.0,    expected:105.8,   ratio:0.823, cat:"inline", companies:10 },
-  {country:"Cyprus",       actual:44.6,    expected:54.6,    ratio:0.818, cat:"inline", companies:4  },
-  {country:"Germany",      actual:4479.4,  expected:5739.0,  ratio:0.781, cat:"inline", companies:192},
-  {country:"Spain",        actual:1571.3,  expected:2139.6,  ratio:0.734, cat:"inline", companies:65 },
-  {country:"Ireland",      actual:561.2,   expected:798.8,   ratio:0.702, cat:"inline", companies:33 },
-  {country:"Denmark",      actual:296.3,   expected:526.4,   ratio:0.563, cat:"under",  companies:30 },
-  {country:"Czech R.",     actual:168.9,   expected:439.0,   ratio:0.385, cat:"under",  companies:19 },
-  {country:"Belgium",      actual:254.6,   expected:823.6,   ratio:0.309, cat:"under",  companies:26 },
-  {country:"Romania",      actual:144.2,   expected:488.3,   ratio:0.295, cat:"under",  companies:12 },
-  {country:"Italy",        actual:580.6,   expected:2912.2,  ratio:0.199, cat:"under",  companies:69 },
-  {country:"Greece",       actual:51.0,    expected:323.7,   ratio:0.158, cat:"under",  companies:6  },
-  {country:"Austria",      actual:86.7,    expected:650.2,   ratio:0.133, cat:"under",  companies:18 },
-  {country:"Slovakia",     actual:17.9,    expected:179.7,   ratio:0.099, cat:"under",  companies:5  },
-  {country:"Slovenia",     actual:8.5,     expected:89.4,    ratio:0.095, cat:"under",  companies:1  },
-  {country:"Hungary",      actual:13.3,    expected:282.0,   ratio:0.047, cat:"under",  companies:6  },
-  {country:"Poland",       actual:50.1,    expected:1191.0,  ratio:0.042, cat:"under",  companies:28 },
-  {country:"Luxembourg",   actual:4.6,     expected:117.7,   ratio:0.039, cat:"under",  companies:5  },
-  {country:"Latvia",       actual:1.7,     expected:55.8,    ratio:0.031, cat:"under",  companies:4  },
-  {country:"Croatia",      actual:3.0,     expected:120.4,   ratio:0.025, cat:"under",  companies:4  },
-  {country:"Malta",        actual:0.4,     expected:33.9,    ratio:0.013, cat:"under",  companies:2  },
-  {country:"Bulgaria",     actual:0.0,     expected:149.8,   ratio:0.000, cat:"under",  companies:1  },
+  {country:"Sweden",       actual:5635.2,  expected:1059.1,  ratio:5.321, cat:"over",   companies:53 },
+  {country:"Netherlands",  actual:6211.9,  expected:2129.7,  ratio:2.917, cat:"over",   companies:72 },
+  {country:"Estonia",      actual:139.7,   expected:77.5,    ratio:1.803, cat:"over",   companies:25 },
+  {country:"Germany",      actual:11479.4, expected:8223.7,  ratio:1.396, cat:"over",   companies:192},
+  {country:"France",       actual:6011.7,  expected:5431.7,  ratio:1.107, cat:"inline", companies:125},
+  {country:"Portugal",     actual:392.2,   expected:526.1,   ratio:0.745, cat:"inline", companies:25 },
+  {country:"Cyprus",       actual:44.6,    expected:69.2,    ratio:0.645, cat:"under",  companies:4  },
+  {country:"Finland",      actual:308.4,   expected:501.6,   ratio:0.615, cat:"under",  companies:23 },
+  {country:"Lithuania",    actual:87.0,    expected:150.2,   ratio:0.580, cat:"under",  companies:10 },
+  {country:"Spain",        actual:1571.3,  expected:2931.8,  ratio:0.536, cat:"under",  companies:65 },
+  {country:"Ireland",      actual:561.2,   expected:1091.8,  ratio:0.514, cat:"under",  companies:33 },
+  {country:"Denmark",      actual:296.3,   expected:734.7,   ratio:0.403, cat:"under",  companies:30 },
+  {country:"Czech R.",     actual:168.9,   expected:623.2,   ratio:0.271, cat:"under",  companies:19 },
+  {country:"Belgium",      actual:254.6,   expected:1139.6,  ratio:0.223, cat:"under",  companies:26 },
+  {country:"Romania",      actual:144.2,   expected:700.4,   ratio:0.206, cat:"under",  companies:12 },
+  {country:"Italy",        actual:580.6,   expected:4140.6,  ratio:0.140, cat:"under",  companies:69 },
+  {country:"Greece",       actual:51.0,    expected:468.3,   ratio:0.109, cat:"under",  companies:6  },
+  {country:"Austria",      actual:86.7,    expected:912.9,   ratio:0.095, cat:"under",  companies:18 },
+  {country:"Slovakia",     actual:17.9,    expected:255.1,   ratio:0.070, cat:"under",  companies:5  },
+  {country:"Slovenia",     actual:8.5,     expected:126.9,   ratio:0.067, cat:"under",  companies:1  },
+  {country:"Hungary",      actual:13.3,    expected:408.7,   ratio:0.033, cat:"under",  companies:6  },
+  {country:"Luxembourg",   actual:4.6,     expected:159.9,   ratio:0.029, cat:"under",  companies:5  },
+  {country:"Poland",       actual:50.1,    expected:1760.0,  ratio:0.028, cat:"under",  companies:28 },
+  {country:"Latvia",       actual:1.7,     expected:75.0,    ratio:0.023, cat:"under",  companies:4  },
+  {country:"Croatia",      actual:3.0,     expected:171.0,   ratio:0.018, cat:"under",  companies:4  },
+  {country:"Malta",        actual:0.4,     expected:43.3,    ratio:0.010, cat:"under",  companies:2  },
+  {country:"Bulgaria",     actual:0.0,     expected:212.6,   ratio:0.000, cat:"under",  companies:1  },
 ];
 
 const CAT_CFG = {
@@ -241,6 +231,45 @@ const CAT_CFG = {
 
 // ── Responsive: detect mobile (≤540px rendered width) ──
 function isMobile(){ return window.innerWidth <= 540; }
+
+// ── Mobile country abbreviations ──
+const ABBREV = {
+  'Netherlands': 'Nether.',
+  'Lithuania':   'Lithuan.',
+  'Luxembourg':  'Luxemb.',
+  'Portugal':    'Portug.',
+  'Slovakia':    'Slovak.',
+  'Slovenia':    'Sloven.',
+  'Bulgaria':    'Bulgar.',
+  'Czech R.':    'Czech R.',  // already short enough, keep
+};
+function countryName(name, mb){
+  return mb && ABBREV[name] ? ABBREV[name] : name;
+}
+
+// ── Legend font: double on mobile — called after render ──
+function updateLegendFont(){
+  const mb = isMobile();
+  const svg = document.getElementById('legend-svg');
+  const texts = svg.querySelectorAll('text');
+  const lines = svg.querySelectorAll('line');
+
+  // Lines always point to bubble tops: yellow top=12, grey top=48
+  // Text anchored at same y with dominant-baseline:middle
+  // Desktop: 15px font. Mobile: 13px (matches country name font).
+  const fs = mb ? 24 : 15;
+
+  svg.setAttribute('height', 104);
+  svg.setAttribute('viewBox', '0 0 700 104');
+
+  texts[0].setAttribute('font-size', fs);
+  texts[1].setAttribute('font-size', fs);
+  texts[0].setAttribute('y', '12');   // yellow bubble top
+  texts[1].setAttribute('y', '48');   // grey bubble top
+
+  lines[0].setAttribute('y1','12'); lines[0].setAttribute('y2','12'); lines[0].setAttribute('x2','114');
+  lines[1].setAttribute('y1','48'); lines[1].setAttribute('y2','48'); lines[1].setAttribute('x2','114');
+}
 
 // ── Sizing: everything scales with mobile flag ──
 const BASE_R_DT = 24;   // desktop baseline radius
@@ -262,10 +291,10 @@ function getConfig(){
     CAT_LABEL_GAP: 5,          // gap between line bottom and label text
     CAT_FONT_H: mb ? 10 : 12,  // line label font size (height for spacing)
     ROW_GAP   : mb ? 16 : 20,  // between rows — slightly more to fit label below line
-    // ratio label fonts scaled by bigR
+    // ratio label fonts scaled by bigR — larger on mobile
     ratioSz: (bigR) => {
-      if(mb) return bigR>44?22:bigR>28?17:bigR>18?14:11;
-      return bigR>65?30:bigR>42?23:bigR>28?18:14;
+      if(mb) return bigR>44?26:bigR>28?18:bigR>18?14:11;
+      return bigR>65?26:bigR>42?19:bigR>28?15:12;
     },
     CAT_FONT  : mb ? 10 : 12,
   };
@@ -278,11 +307,9 @@ function approxTextWidth(text, fontSize){
   return text.length * fontSize * 0.82;
 }
 
-// Format ratio: 2 decimals when tenths digit is 0 (e.g. 0.09→0.09×, 1.04→1.04×), else 1 decimal
-function fmtRatio(r, country){
-  // Netherlands: no decimal
-  if(country === 'Netherlands') return Math.round(r)+'×';
-  return r.toFixed(1)+'×';
+// Format ratio: always show 1 decimal; show as "0.0" not just "0"
+function fmtRatio(r){
+  return (r < 0.1 ? r.toFixed(2) : r.toFixed(1))+'×';
 }
 
 function buildChart(){
@@ -406,7 +433,7 @@ function buildChart(){
     vEl.setAttribute('text-anchor','middle'); vEl.setAttribute('font-size',vSz);
     vEl.setAttribute('font-family','PT Sans, sans-serif'); vEl.setAttribute('font-weight','700');
     vEl.setAttribute('fill','#222'); vEl.setAttribute('pointer-events','none');
-    vEl.textContent = fmtRatio(d.ratio, d.country);
+    vEl.textContent = fmtRatio(d.ratio);
     g.appendChild(vEl);
 
     // Country name
@@ -415,18 +442,23 @@ function buildChart(){
     nEl.setAttribute('text-anchor','middle'); nEl.setAttribute('font-size',NAME_FONT);
     nEl.setAttribute('font-family','PT Sans, sans-serif');
     nEl.setAttribute('fill','#333'); nEl.setAttribute('pointer-events','none');
-    nEl.textContent=d.country;
+    nEl.textContent=countryName(d.country, isMobile());
     g.appendChild(nEl);
 
     g.addEventListener('mouseenter',()=>{ ring.setAttribute('opacity','1'); showTip(idx); });
     g.addEventListener('mouseleave',()=>{ ring.setAttribute('opacity','0'); hideTip(); });
-    g.addEventListener('touchstart',(e)=>{ e.preventDefault(); ring.setAttribute('opacity','1'); showTip(idx); },{passive:false});
-    g.addEventListener('touchend',()=>{ setTimeout(()=>{ ring.setAttribute('opacity','0'); hideTip(); },2200); });
+
+    // ── Touch: tap/hold to show tooltip, release to hide ──
+    g.addEventListener('touchstart', e=>{
+      e.stopPropagation();
+      ring.setAttribute('opacity','1'); showTip(idx);
+      const t=e.touches[0]; posTip(BUBBLE_GEO[idx]);
+    }, {passive:true});
+    g.addEventListener('touchend', ()=>{ ring.setAttribute('opacity','0'); hideTip(); }, {passive:true});
     svg.appendChild(g);
   });
 
   // ── Category lines (4px thick) replacing bars ──
-  const drawnCatLabels = new Set(); // track which labels have been rendered
   rowInfo.forEach((info,ri)=>{
     const lineY   = info.lineY;
     const rowStart= ri*COLS;
@@ -442,7 +474,6 @@ function buildChart(){
       else cur.cells.push(cell);
     });
 
-    // Track which category labels have already been drawn across all rows
     runs.forEach((run,ri2)=>{
       const cfg  = CAT_CFG[run.cat];
       const first= run.cells[0];
@@ -460,11 +491,10 @@ function buildChart(){
       line.setAttribute('fill',cfg.fill);
       svg.appendChild(line);
 
-      // Label BELOW the line — only once per category across the whole chart, and only if it fits
+      // Label BELOW the line — only if it fits
       const labelText=cfg.label.toUpperCase();
       const estW = approxTextWidth(labelText, CAT_FONT);
-      if(estW < lw-6 && !drawnCatLabels.has(run.cat)){
-        drawnCatLabels.add(run.cat);
+      if(estW < lw-6){
         const lEl=document.createElementNS(ns,'text');
         lEl.setAttribute('x',midX);
         lEl.setAttribute('y', lineY + LINE_H + CAT_LABEL_GAP);
@@ -485,10 +515,7 @@ function buildChart(){
 const tip=document.getElementById('tooltip');
 let currentIdx=-1;
 
-function fmt(n){
-  if(n>=1000) return (n/1000).toFixed(1)+'B';
-  return Math.round(n)+'M';
-}
+function fmt(n){ return Math.round(n).toLocaleString(); }
 
 function showTip(idx){
   currentIdx=idx;
@@ -503,11 +530,11 @@ function showTip(idx){
   const rBar=document.getElementById('tt-ratio-bar');
   rBar.style.background=cfg.fill;
   const rVal=document.getElementById('tt-ratio-val');
-  rVal.textContent=fmtRatio(d.ratio, d.country); rVal.style.color=cfg.text;
+  rVal.textContent=fmtRatio(d.ratio); rVal.style.color=cfg.text;
   document.getElementById('tt-ratio-lbl').style.color=cfg.text;
 
-  document.getElementById('tt-actual').textContent   ='$'+fmt(d.actual);
-  document.getElementById('tt-expected').textContent ='$'+fmt(d.expected);
+  document.getElementById('tt-actual').textContent   ='$'+fmt(d.actual)+'M';
+  document.getElementById('tt-expected').textContent ='$'+fmt(d.expected)+'M';
   document.getElementById('tt-companies').textContent=d.companies;
 
   tip.style.display='block';
@@ -538,14 +565,22 @@ function posTip(geo){
 
 function hideTip(){ tip.style.display='none'; currentIdx=-1; }
 
+// Dismiss tooltip when tapping outside any bubble
+document.addEventListener('touchstart', e=>{
+  if(currentIdx>=0 && !e.target.closest('[data-bubble]')){
+    hideTip();
+  }
+}, {passive:true});
+
 // ── Rebuild on resize (debounced) ──
 let resizeTimer;
 window.addEventListener('resize',()=>{
   clearTimeout(resizeTimer);
-  resizeTimer=setTimeout(()=>{ buildChart(); },120);
+  resizeTimer=setTimeout(()=>{ buildChart(); updateLegendFont(); },120);
 });
 
 buildChart();
+updateLegendFont();
 </script>
 </body>
 </html>
