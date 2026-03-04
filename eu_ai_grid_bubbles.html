@@ -7,9 +7,7 @@
 <style>
 @font-face {
   font-family: 'Chaney';
-  src: url('chaney-ultraextended-webfont.woff2') format('woff2'),
-       url('chaney-ultraextended-webfont.woff') format('woff'),
-       url('chaney-ultraextended-webfont.ttf') format('truetype');
+  src: url('CHANEY-Regular.otf') format('opentype');
   font-weight: normal; font-style: normal;
 }
 @import url('https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:ital,wght@0,400;0,700;1,400&display=swap');
@@ -142,8 +140,8 @@ h1 .trail{display:inline-block;border-bottom:3px solid var(--dark);line-height:0
   -->
   <svg id="legend-svg" width="700" height="104" viewBox="0 0 700 104"
        style="display:block;width:100%;overflow:visible">
-    <circle cx="50" cy="56" r="44" fill="#fdf151" stroke="#656565" stroke-width="0.25"/>
-    <circle cx="50" cy="74" r="26" fill="#656565" stroke="none"/>
+    <circle cx="50" cy="56" r="44" fill="#fdf151" stroke="#222222" stroke-width="0.25"/>
+    <circle cx="50" cy="74" r="26" fill="#222222" stroke="none"/>
     <line x1="50" y1="12" x2="114" y2="12" stroke="#cccccc" stroke-width="0.8"/>
     <line x1="50" y1="48" x2="114" y2="48" stroke="#cccccc" stroke-width="0.8"/>
     <text x="118" y="12" font-family="PT Sans, sans-serif" font-size="15" fill="#555" dominant-baseline="middle">actual level</text>
@@ -226,7 +224,7 @@ const DATA = [
 const CAT_CFG = {
   over:   {fill:'#fdf151', text:'#333333', label:'Over Represented' },
   inline: {fill:'#c8c8c8', text:'#333333', label:'In Line'          },
-  under:  {fill:'#656565', text:'#ffffff', label:'Under Represented'},
+  under:  {fill:'#222222', text:'#ffffff', label:'Under Represented'},
 };
 
 // ── Responsive: detect mobile (≤540px rendered width) ──
@@ -398,24 +396,24 @@ function buildChart(){
     if(over1){
       const yc=document.createElementNS(ns,'circle');
       yc.setAttribute('cx',cx); yc.setAttribute('cy',cyVal); yc.setAttribute('r',rvv);
-      yc.setAttribute('fill','#fdf151'); yc.setAttribute('stroke','#656565'); yc.setAttribute('stroke-width','0.25');
+      yc.setAttribute('fill','#fdf151'); yc.setAttribute('stroke','#222222'); yc.setAttribute('stroke-width','0.25');
       yc.setAttribute('filter','url(#sh)');
       g.appendChild(yc);
       const bc=document.createElementNS(ns,'circle');
       bc.setAttribute('cx',cx); bc.setAttribute('cy',cyBas); bc.setAttribute('r',rb);
-      bc.setAttribute('fill','#656565'); bc.setAttribute('fill-opacity','0.10');
-      bc.setAttribute('stroke','#656565'); bc.setAttribute('stroke-width','0.5');
+      bc.setAttribute('fill','#222222'); bc.setAttribute('fill-opacity','0.10');
+      bc.setAttribute('stroke','#222222'); bc.setAttribute('stroke-width','0.5');
       bc.setAttribute('stroke-dasharray','4 6'); bc.setAttribute('pointer-events','none');
       g.appendChild(bc);
     } else {
       const bc=document.createElementNS(ns,'circle');
       bc.setAttribute('cx',cx); bc.setAttribute('cy',cyBas); bc.setAttribute('r',rb);
-      bc.setAttribute('fill','#656565'); bc.setAttribute('stroke','#656565'); bc.setAttribute('stroke-width','0.25');
+      bc.setAttribute('fill','#222222'); bc.setAttribute('stroke','#222222'); bc.setAttribute('stroke-width','0.25');
       bc.setAttribute('pointer-events','none');
       g.appendChild(bc);
       const yc=document.createElementNS(ns,'circle');
       yc.setAttribute('cx',cx); yc.setAttribute('cy',cyVal); yc.setAttribute('r',rvv);
-      yc.setAttribute('fill','#fdf151'); yc.setAttribute('stroke','#656565'); yc.setAttribute('stroke-width','0.25');
+      yc.setAttribute('fill','#fdf151'); yc.setAttribute('stroke','#222222'); yc.setAttribute('stroke-width','0.25');
       g.appendChild(yc);
     }
 
@@ -502,7 +500,7 @@ function buildChart(){
         lEl.setAttribute('dominant-baseline','hanging');
         lEl.setAttribute('font-size',CAT_FONT);
         lEl.setAttribute('font-family','Chaney, sans-serif');
-        lEl.setAttribute('fill', cfg.fill==='#fdf151'?'#333':cfg.fill==='#c8c8c8'?'#555':'#656565');
+        lEl.setAttribute('fill', cfg.fill==='#fdf151'?'#333':cfg.fill==='#c8c8c8'?'#555':'#222222');
         lEl.setAttribute('pointer-events','none');
         lEl.textContent=labelText;
         svg.appendChild(lEl);
