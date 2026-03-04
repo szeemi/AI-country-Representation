@@ -36,13 +36,13 @@ body{
 }
 h1{
   font-family:'Chaney',sans-serif;font-weight:normal;
-  font-size:clamp(20px,5vw,42px);line-height:1.05;
+  font-size:clamp(28px,7vw,42px);line-height:1.05;
   text-transform:uppercase;color:var(--dark);
 }
 h1 .trail{ text-decoration:none; }
 .subtitle{
   font-family:'PT Sans',sans-serif;
-  font-size:clamp(12px,2vw,14px);
+  font-size:clamp(16px,2.6vw,18px);
   font-style:italic;color:var(--grey);line-height:1.5;
   max-width:320px;margin-top:12px;
 }
@@ -141,11 +141,11 @@ h1 .trail{ text-decoration:none; }
   <svg id="legend-svg" width="700" height="104" viewBox="0 0 700 104"
        style="display:block;width:100%;overflow:visible">
     <circle cx="50" cy="56" r="44" fill="#fdf151" stroke="#222222" stroke-width="0.25"/>
-    <circle cx="50" cy="74" r="26" fill="#222222" stroke="none"/>
-    <line x1="50" y1="12" x2="114" y2="12" stroke="#cccccc" stroke-width="0.8"/>
-    <line x1="50" y1="48" x2="114" y2="48" stroke="#cccccc" stroke-width="0.8"/>
-    <text x="118" y="12" font-family="PT Sans, sans-serif" font-size="15" fill="#555" dominant-baseline="middle">actual level</text>
-    <text x="118" y="48" font-family="PT Sans, sans-serif" font-size="15" fill="#555" dominant-baseline="middle">expected level</text>
+    <circle cx="50" cy="74" r="26" fill="#333333" stroke="none"/>
+    <line x1="50" y1="12" x2="114" y2="12" stroke="#333333" stroke-width="1"/>
+    <line x1="50" y1="48" x2="114" y2="48" stroke="#333333" stroke-width="1"/>
+    <text x="118" y="12" font-family="PT Sans, sans-serif" font-size="15" fill="#555" dominant-baseline="middle">actual funding</text>
+    <text x="118" y="48" font-family="PT Sans, sans-serif" font-size="15" fill="#555" dominant-baseline="middle">expected funding</text>
   </svg>
 </div>
 
@@ -224,7 +224,7 @@ const DATA = [
 const CAT_CFG = {
   over:   {fill:'#fdf151', text:'#333333', label:'Over Represented' },
   inline: {fill:'#c8c8c8', text:'#333333', label:'In Line'          },
-  under:  {fill:'#222222', text:'#ffffff', label:'Under Represented'},
+  under:  {fill:'#333333', text:'#ffffff', label:'Under Represented'},
 };
 
 // ── Responsive: detect mobile (≤540px rendered width) ──
@@ -284,7 +284,7 @@ function getConfig(){
     NAME_GAP  : mb ? 13 : 16,
     NAME_FONT : mb ? 13 : 15,
     LINE_GAP  : mb ? 8  : 10,  // space from name to category line
-    LINE_H    : 4,              // category line thickness (px)
+    LINE_H    : 6,              // category line thickness (px)
     LINE_SPACE: mb ? 4 : 5,    // gap between adjacent different-cat lines
     CAT_LABEL_GAP: 5,          // gap between line bottom and label text
     CAT_FONT_H: mb ? 10 : 12,  // line label font size (height for spacing)
@@ -401,19 +401,19 @@ function buildChart(){
       g.appendChild(yc);
       const bc=document.createElementNS(ns,'circle');
       bc.setAttribute('cx',cx); bc.setAttribute('cy',cyBas); bc.setAttribute('r',rb);
-      bc.setAttribute('fill','#222222'); bc.setAttribute('fill-opacity','0.10');
-      bc.setAttribute('stroke','#222222'); bc.setAttribute('stroke-width','0.5');
+      bc.setAttribute('fill','#333333'); bc.setAttribute('fill-opacity','0.10');
+      bc.setAttribute('stroke','#656565'); bc.setAttribute('stroke-width','0.5');
       bc.setAttribute('stroke-dasharray','4 6'); bc.setAttribute('pointer-events','none');
       g.appendChild(bc);
     } else {
       const bc=document.createElementNS(ns,'circle');
       bc.setAttribute('cx',cx); bc.setAttribute('cy',cyBas); bc.setAttribute('r',rb);
-      bc.setAttribute('fill','#222222'); bc.setAttribute('stroke','#222222'); bc.setAttribute('stroke-width','0.25');
+      bc.setAttribute('fill','#333333'); bc.setAttribute('stroke','#333333'); bc.setAttribute('stroke-width','0.25');
       bc.setAttribute('pointer-events','none');
       g.appendChild(bc);
       const yc=document.createElementNS(ns,'circle');
       yc.setAttribute('cx',cx); yc.setAttribute('cy',cyVal); yc.setAttribute('r',rvv);
-      yc.setAttribute('fill','#fdf151'); yc.setAttribute('stroke','#222222'); yc.setAttribute('stroke-width','0.25');
+      yc.setAttribute('fill','#fdf151'); yc.setAttribute('stroke','#333333'); yc.setAttribute('stroke-width','0.25');
       g.appendChild(yc);
     }
 
@@ -500,7 +500,7 @@ function buildChart(){
         lEl.setAttribute('dominant-baseline','hanging');
         lEl.setAttribute('font-size',CAT_FONT);
         lEl.setAttribute('font-family','Chaney, sans-serif');
-        lEl.setAttribute('fill', cfg.fill==='#fdf151'?'#333':cfg.fill==='#c8c8c8'?'#555':'#222222');
+        lEl.setAttribute('fill', '#333333');
         lEl.setAttribute('pointer-events','none');
         lEl.textContent=labelText;
         svg.appendChild(lEl);
