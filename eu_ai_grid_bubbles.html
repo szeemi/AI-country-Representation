@@ -446,13 +446,27 @@ function buildChart(){
     g.addEventListener('mouseenter',()=>{ ring.setAttribute('opacity','1'); showTip(idx); });
     g.addEventListener('mouseleave',()=>{ ring.setAttribute('opacity','0'); hideTip(); });
 
-    // ── Touch: tap/hold to show tooltip, release to hide ──
+    // ── Touch: show tooltip on tap, keep visible, auto-hide after 3s ──
     g.addEventListener('touchstart', e=>{
       e.stopPropagation();
-      ring.setAttribute('opacity','1'); showTip(idx);
-      const t=e.touches[0]; posTip(BUBBLE_GEO[idx]);
+      // Cancel any pending auto-hide
+      clearTimeout(window._tipTimer);
+      // Clear previous active ring
+      if(window._activeRing && window._activeRing !== ring){
+        window._activeRing.setAttribute('opacity','0');
+      }
+      window._activeRing = ring;
+      ring.setAttribute('opacity','1');
+      showTip(idx);
+      posTip(BUBBLE_GEO[idx]);
+      // Auto-hide after 3 seconds
+      window._tipTimer = setTimeout(()=>{
+        ring.setAttribute('opacity','0');
+        hideTip();
+        window._activeRing = null;
+      }, 3000);
     }, {passive:true});
-    g.addEventListener('touchend', ()=>{ ring.setAttribute('opacity','0'); hideTip(); }, {passive:true});
+    g.addEventListener('touchend', e=>{ e.stopPropagation(); }, {passive:true});
     svg.appendChild(g);
   });
 
@@ -566,6 +580,8 @@ function hideTip(){ tip.style.display='none'; currentIdx=-1; }
 // Dismiss tooltip when tapping outside any bubble
 document.addEventListener('touchstart', e=>{
   if(currentIdx>=0 && !e.target.closest('[data-bubble]')){
+    clearTimeout(window._tipTimer);
+    if(window._activeRing){ window._activeRing.setAttribute('opacity','0'); window._activeRing=null; }
     hideTip();
   }
 }, {passive:true});
